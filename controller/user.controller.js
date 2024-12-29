@@ -1,6 +1,6 @@
 import { validationResult} from "express-validator"
 import { userModel } from "../models/user.models.js";
-import { checkemail, createuser } from "../services/user.service.js";
+import { checkemail, createuser, existemail } from "../services/user.service.js";
 
 
 
@@ -43,6 +43,49 @@ const userSignup = async(req ,res) =>{
 }
 
 
+const userlogin = async( req , res) =>{
+      //check perform validation on body
+      const error = validationResult(req);
+      if(!error.isEmpty()){
+        return res.json({errors : error.array()});
+    }
+
+    const { email , password} = req.body;
+
+    //check user is exiting or not 
+    const existUser = await existemail(email);
+
+    if(!existUser) {
+        return res.status(401).json({
+            message : "user is not existing.......Invalide email"
+        })
+    }
+
+    //check password
+    const isPassword = await existUser.chechuserpassword(password);
+
+    if(!isPassword) return res.status(400).json({error : "password is wrong "});
+
+    //genrate token 
+
+    const token = await existUser.authtoken();
+
+    return res.
+    status(200)
+    .cookie("token" , token )
+    .json({
+        message : "login successfull",
+    });
+   
+
+
+      
+        
+                
+         
+}
+
 export {
-    userSignup
+    userSignup,
+    userlogin
 }

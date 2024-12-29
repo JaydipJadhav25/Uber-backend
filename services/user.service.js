@@ -46,6 +46,20 @@ const checkemail = async(email) =>{
     
 }
 
+const existemail = async(email) =>{
+    if(!email) return new Error("email is requride");
+
+   
+    //check 
+    const existemail  = await userModel.findOne({email}).select('+password'); //password lagnare na 
+
+     
+    return existemail;
+
+
+
+    
+}
 
 
 
@@ -54,4 +68,4 @@ const checkemail = async(email) =>{
 
 
 
-export { createuser , checkemail}
+export { createuser , checkemail , existemail}
