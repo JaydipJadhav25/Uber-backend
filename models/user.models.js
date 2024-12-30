@@ -39,7 +39,10 @@ userSchem.methods.authtoken = function(){
     const token  = jwt.sign({
         _id : this._id ,
         email : this.email
-    } , process.env.JWT_SCERET)
+    } , process.env.JWT_SCERET , {
+        expiresIn : "24h"
+    }
+    )
 
     return token;
 }

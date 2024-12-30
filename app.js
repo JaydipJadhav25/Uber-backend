@@ -3,7 +3,8 @@ dotenv.config();
 import express from "express"
 import cors from  "cors"
 import { dbconnect } from "./db/dbConnection.js";
-import userRoutes from "./routes/user.routes.js"
+import userRoutes from "./routes/user.routes.js";
+import cookieParser from "cookie-parser";
 
 
 
@@ -13,6 +14,7 @@ dbconnect();
 app.use(cors());//acpet req anywherer
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
+app.use(cookieParser());
 
 
 app.get("/" , (req , res) =>{
