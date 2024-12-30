@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import { userModel } from "../models/user.models.js"
 import { blacklistToken } from "../models/blacklisttoken.model.js";
+import { captionModel } from "../models/caption.model.js";
 
 const authUser = async(req, res , next) =>{
     // const token = req.cookies.token ||  req.headers.authorization.split(' ')[1] || null ; 
@@ -54,5 +55,56 @@ const authUser = async(req, res , next) =>{
     }
 }
 
+const authCaption = async(req ,res , next) =>{
 
-export { authUser}
+    // const token = req.cookies?.token || req.headers?.split('')[1];
+    const token = req.cookies.token;
+
+   try {
+     if(!token){
+         return res.json({
+             message : "Unauthorized Rquest"
+         })
+     }
+     //check blacklist token
+    const isblacklisttoken = await blacklistToken.findOne({token});
+
+    if(isblacklisttoken){
+        return res.json({
+            message : "Unauthorized Rquest Token is add in blacklist"
+        })
+    }
+
+
+
+
+     //decode token
+     const decodetoken =  jwt.verify(token ,process.env.JWT_SCERET );
+ 
+     const caption = await captionModel.findById({_id : decodetoken._id});
+ 
+     if(!caption){
+         return res.json({
+             message : "Unauthorized Rquest"
+         })
+     }
+ 
+     //set
+     req.caption = caption;
+ 
+     next();
+
+   } catch (error) {
+    console.log(error)
+    return res.json({
+        message : "Unauthorized Rquest"
+    })
+
+    
+   }
+
+
+}
+
+
+export { authUser , authCaption}

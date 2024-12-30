@@ -5,6 +5,7 @@ import cors from  "cors"
 import { dbconnect } from "./db/dbConnection.js";
 import userRoutes from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
+import captionRouters from "./routes/caption.routes.js";
 
 
 
@@ -20,7 +21,10 @@ app.use(cookieParser());
 app.get("/" , (req , res) =>{
     return res.send("hello world");
 })
-app.use("/user" , userRoutes)
+
+
+app.use("/user" , userRoutes);
+app.use("/caption" , captionRouters);
 
 
 
