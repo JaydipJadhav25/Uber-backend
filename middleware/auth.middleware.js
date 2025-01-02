@@ -4,12 +4,14 @@ import { blacklistToken } from "../models/blacklisttoken.model.js";
 import { captionModel } from "../models/caption.model.js";
 
 const authUser = async(req, res , next) =>{
+    console.log("call.............................")
     // const token = req.cookies.token ||  req.headers.authorization.split(' ')[1] || null ; 
     ;
     // console.log("token : " , req);
     // const token = req.headers.authorization.split(' ')[1] ;
     const token = req.cookies.token ;
 
+    console.log("token : " , token);
 
     if(!token) {
         return res.json({
@@ -31,6 +33,7 @@ const authUser = async(req, res , next) =>{
     try {
         
         const decodetoken = jwt.verify(token , process.env.JWT_SCERET);
+        
         const user = await userModel.findById(decodetoken._id);
         if(!user) {
             return res.json({
@@ -52,6 +55,11 @@ const authUser = async(req, res , next) =>{
         })
         .status(401)
         
+    }finally{
+
+    console.log("call.............................")
+
+
     }
 }
 

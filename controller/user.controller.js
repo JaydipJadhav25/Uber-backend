@@ -7,14 +7,22 @@ import { blacklistToken } from "../models/blacklisttoken.model.js";
 const userSignup = async(req ,res) =>{
 
     //check perform validation on body
+    console.log(" req body : " , req.body);
+
     const error =  validationResult(req); //pass req then check body
+    console.log("error : " , error);
     if(!error.isEmpty()){
-        return res.json({errors : error.array()});
+        return res
+        .status(400)
+        .json({message : error.array()});
     }
 
     //get data
     const { fullname , email , password} = req.body;
+
+
     console.log("data : " , fullname , email , password);
+
 
     const useremail = await checkemail(email);
     if(!useremail){
@@ -36,9 +44,10 @@ const userSignup = async(req ,res) =>{
     //response
 
     return res.json({
-        token , 
-        user
+        message : "user create successfully",
+        
     })
+    .status(200)
 
 }
 
@@ -70,11 +79,12 @@ const userlogin = async( req , res) =>{
 
     const token = await existUser.authtoken();
 
-    return res.
-    status(200)
-    .cookie("token" , token )
+    return res
+    .cookie("token" , token)
+    .status(200)
     .json({
         message : "login successfull",
+        token
     });
    
 

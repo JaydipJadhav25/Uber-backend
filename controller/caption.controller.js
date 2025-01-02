@@ -18,7 +18,9 @@ const captionsignup = async (req, res) => {
     //check email 
     const existingUser = await emailcheck(email);
     if(!existingUser){
-        return res.json({
+        return res
+        .status(401)
+        .json({
             message : "email is allready exites"
         })
     }
@@ -30,7 +32,9 @@ const captionsignup = async (req, res) => {
 
     //
     if(!caption){
-        return res.json({
+        return res
+        .status(401)
+        .json({
             message : "caption create error , try agin"
         })
     }
@@ -55,11 +59,13 @@ const captionlogin = async (req , res) => {
 
     const { email , password} = req.body;
 
+    console.log("data : " , email , password);
+
     //check user is exiting or not 
     const caption = await findCaption(email);
      
     if(!caption){
-        return res.json({
+        return res.status(401).json({
             message : "caption is not found"
         })
     }
@@ -68,19 +74,21 @@ const captionlogin = async (req , res) => {
     const comparePassword = await caption.checkpassword(password);
 
     if(!comparePassword){
-        return res.json({
+        return res.status(401).json({
             message : "password is not matching"
         })
     }
 
     //gen token
     const token = await caption.authtoken();
+    console.log("token " , token);
 
     return res
-    .status(200)
     .cookie("token" , token)
+    .status(200)
     .json({
-      message : " caption login successfull",  
+      message : " caption login successfull", 
+      token 
     })
 
 }
