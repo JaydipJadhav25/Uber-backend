@@ -1,29 +1,40 @@
 import { riderModel } from "../models/ride.model.js";
 import { addresscoordinates } from "./map.service.js";
 
-const calculateDistance = (pickup, destination) => {
+const calculateDistance = async(pickup, destination) => {
     // Dummy implementation for distance calculation
     // In real scenario, you would use a service like Google Maps API
+    const pickdata = await addresscoordinates(pickup);
+    const destinationdata = await addresscoordinates(destination);
+
+    console.log("data of address : " , pickdata[0], destinationdata[0]);
+
     return Math.sqrt(
-        Math.pow(destination.lat - pickup.lat, 2) +
-        Math.pow(destination.lng - pickup.lng, 2)
+        Math.pow(destinationdata[0].lat - pickdata[0].lat, 2) +
+        Math.pow(destinationdata[0].lng - pickdata[0].lng, 2)
     );
 };
 
-const calculateFare = (vehicletype, pickup, destination) => {
+const calculateFare = async(pickup, destination) => {
     const rates = {
         auto: 10, // rate per km for auto
         car: 15, // rate per km for car
         bike: 5 // rate per km for bike
     };
+console.log("pickup : " , pickup , destination);
 
-    if (!rates[vehicletype]) {
-        throw new Error("Invalid vehicle type");
-    }
+    const distance = await calculateDistance(pickup, destination);
 
-    const distance = calculateDistance(pickup, destination);
+   
+        const carfaer = Math.round(rates.car * distance)
+        const autofaer = Math.round(rates.auto * distance)
+        const bikefaer = Math.round(rates.bike * distance)
 
-    return rates[vehicletype] * distance;
+    return {
+        auto: autofaer,
+        car: carfaer,
+        bike: bikefaer
+    };
 };
 
 
@@ -42,28 +53,31 @@ const createRide = async(user , pickup , destination , vehicletype) =>{
         throw new Error("All feild required.")
     }
 
+    console.log("user : " , user , destination , vehicletype);
+
 
     //find lat , lng of pickup and destination
 
-    const pickdata = await addresscoordinates(pickup);
-    const destinationdata = await addresscoordinates(destination);
+    // const pickdata = await addresscoordinates(pickup);
+    // const destinationdata = await addresscoordinates(destination);
 
-    console.log("data of address : " , pickdata[0], destinationdata[0]);
+    // console.log("data of address : " , pickdata[0], destinationdata[0]);
 
 
 
     //calculate fare
-    const fare = calculateFare(vehicletype , pickdata[0],  destinationdata[0]);
+    const fareresult = await calculateFare(pickup,  destination);
 
-    console.log("fare  : " , fare);
-    const otp = await genOtp();
+    
+
+    const otp =  genOtp();
     
     //careate ride doc
     const ride = await riderModel.create({
         user,
         pickup,
         destination,
-        fare,
+        fare : fareresult[vehicletype],
         otp 
     }); 
 
@@ -71,4 +85,5 @@ const createRide = async(user , pickup , destination , vehicletype) =>{
 }
 
 
-export { createRide}
+
+export { createRide , calculateFare , calculateDistance };

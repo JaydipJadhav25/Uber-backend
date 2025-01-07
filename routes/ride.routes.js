@@ -1,11 +1,13 @@
 import { Router } from "express";
-import { createride } from "../controller/ride.controller.js";
+import { createride, getFare } from "../controller/ride.controller.js";
 
 const router = Router();
 
 
 
 router.post("/create" , createride);
+
+router.get("/get-fare" , getFare);
 
 
 

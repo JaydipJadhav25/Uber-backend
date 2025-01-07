@@ -75,6 +75,10 @@ const captionSchema = mongoose.Schema({
             type : Number,
             
         }
+    },
+    radius : {
+  type :Number,
+  default : 20
     }
         
 

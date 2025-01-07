@@ -2,6 +2,8 @@ import { validationResult} from "express-validator"
 import { userModel } from "../models/user.models.js";
 import { checkemail, createuser, existemail } from "../services/user.service.js";
 import { blacklistToken } from "../models/blacklisttoken.model.js";
+import jwt from "jsonwebtoken"
+
 
 
 const userSignup = async(req ,res) =>{
@@ -84,7 +86,8 @@ const userlogin = async( req , res) =>{
     .status(200)
     .json({
         message : "login successfull",
-        token
+        token,
+        existUser
     });
    
 
@@ -115,10 +118,32 @@ const userlogout = async(req , res) =>{
 }
 
 
+const getUserbyId = async(req , res)=>{
+    const token  = req.query.token ;
+
+    //decode token 
+      try {
+        const user = jwt.verify(token, process.env.JWT_SCERET);
+    
+        return res.json(user).status(200);
+      } catch (error) {
+     
+        return res.json({
+            message : error,
+        })
+        
+      }
+
+
+
+
+}
+
 
 export {
     userSignup,
     userlogin,
     userProfile,
-    userlogout
+    userlogout,
+    getUserbyId
 }

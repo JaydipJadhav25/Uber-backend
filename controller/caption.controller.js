@@ -79,6 +79,7 @@ const captionlogin = async (req , res) => {
         })
     }
 
+
     //gen token
     const token = await caption.authtoken();
     console.log("token " , token);
@@ -88,7 +89,8 @@ const captionlogin = async (req , res) => {
     .status(200)
     .json({
       message : " caption login successfull", 
-      token 
+      token ,
+      caption
     })
 
 }

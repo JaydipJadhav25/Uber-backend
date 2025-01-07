@@ -1,5 +1,6 @@
 
 import puneSataraData from "../dummydata.json" assert { type: "json" };
+import { captionModel } from "../models/caption.model.js";
 
 
 
@@ -76,4 +77,11 @@ const autoSuggest = async (address) => {
     return suggestions;
 }    
 
-export { addresscoordinates, distancetime , autoSuggest };
+
+const getCaptionInRadius = async(radius)=>{
+    const caption = await captionModel.findOne({ radius: { $lte: radius } });
+    return caption
+    
+}
+
+export { addresscoordinates, distancetime , autoSuggest , getCaptionInRadius };
